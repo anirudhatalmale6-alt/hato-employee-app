@@ -1,4 +1,4 @@
-package com.sportential.hato_employee_app
+package com.tex.android
 
 import io.flutter.embedding.android.FlutterActivity
 

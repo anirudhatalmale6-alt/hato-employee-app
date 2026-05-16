@@ -1,10 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'screens/login_screen.dart';
 import 'screens/home_screen.dart';
+import 'services/api_service.dart';
 
-void main() {
+@pragma('vm:entry-point')
+Future<void> _firebaseBackgroundHandler(RemoteMessage message) async {
+  await Firebase.initializeApp();
+}
+
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+  FirebaseMessaging.onBackgroundMessage(_firebaseBackgroundHandler);
   runApp(const HatoApp());
 }
 
@@ -72,6 +82,7 @@ class _AuthGateState extends State<AuthGate> {
   void initState() {
     super.initState();
     _checkAuth();
+    _setupPushNotifications();
   }
 
   Future<void> _checkAuth() async {
@@ -80,6 +91,37 @@ class _AuthGateState extends State<AuthGate> {
     setState(() {
       _loggedIn = token != null;
       _loading = false;
+    });
+  }
+
+  Future<void> _setupPushNotifications() async {
+    final messaging = FirebaseMessaging.instance;
+    await messaging.requestPermission();
+
+    final fcmToken = await messaging.getToken();
+    if (fcmToken != null) {
+      final authToken = await ApiService.getToken();
+      if (authToken != null) {
+        ApiService.updateDeviceToken(fcmToken);
+      }
+    }
+
+    messaging.onTokenRefresh.listen((newToken) async {
+      final authToken = await ApiService.getToken();
+      if (authToken != null) {
+        ApiService.updateDeviceToken(newToken);
+      }
+    });
+
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      if (message.notification != null && mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(message.notification!.body ?? ''),
+            duration: const Duration(seconds: 4),
+          ),
+        );
+      }
     });
   }
 
