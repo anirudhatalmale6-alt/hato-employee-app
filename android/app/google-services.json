@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "739740073588",
+    "project_id": "texperience-b93b0",
+    "storage_bucket": "texperience-b93b0.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:739740073588:android:50a8ed8b97277058901b21",
+        "android_client_info": {
+          "package_name": "com.tex.android"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD1hjHnvXrXhI-zfZVmaApqnJmUm_IltYs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
